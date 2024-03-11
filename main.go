@@ -43,4 +43,5 @@ func no18() {
 func no19() {
 	var n float32 = 1.0001
 	fmt.Println(n)
+	fmt.Println(n * n)
 }
