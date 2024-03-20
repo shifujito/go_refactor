@@ -108,6 +108,20 @@ func getOperation(id string) []float32 {
 	return operations
 }
 
+func mistakeCopy() {
+	// 間違ったコピー
+	src := []int{1, 2, 3}
+	var dst []int
+	copy(dst, src)
+	fmt.Println(dst)
+
+	// 正しいコピー
+	src = []int{1, 2, 3}
+	dst = make([]int, len(src))
+	copy(dst, src)
+	fmt.Println(dst)
+}
+
 func getFunc(name string) (func(), error) {
 	funcs := map[string]func(){
 		"no17": addNumbers,
@@ -116,6 +130,7 @@ func getFunc(name string) (func(), error) {
 		"no21": initSlice,
 		"no22": nilSliceAndEmptySlice,
 		"no23": handleOperations,
+		"no24": mistakeCopy,
 	}
 
 	f, exists := funcs[name]

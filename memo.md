@@ -50,3 +50,11 @@ nilであるかを確認するのではなく、長さを調べるようにす�
 空スライスとnilスライスを意識したくないため。
 
 ## No.24 スライスのコピーを正しく行わない
+
+```golang
+src := []int{1, 2, 3}
+var dst []int
+copy(dst, src)
+fmt.Println(dst)
+```
+copy関数は、コピー元の
