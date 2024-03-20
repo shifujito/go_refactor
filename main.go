@@ -122,6 +122,19 @@ func mistakeCopy() {
 	fmt.Println(dst)
 }
 
+func mistakeAppend() {
+	// 間違った追加
+	s1 := []int{1, 2, 3}
+	s2 := s1[1:2]
+	s3 := append(s2, 10)
+	fmt.Println(s3)
+
+	// 正しい追加
+	// dst = []int{1, 2, 3}
+	// dst = append(dst, 4)
+	// fmt.Println(dst)
+}
+
 func getFunc(name string) (func(), error) {
 	funcs := map[string]func(){
 		"no17": addNumbers,
@@ -131,6 +144,7 @@ func getFunc(name string) (func(), error) {
 		"no22": nilSliceAndEmptySlice,
 		"no23": handleOperations,
 		"no24": mistakeCopy,
+		"no25": mistakeAppend,
 	}
 
 	f, exists := funcs[name]
