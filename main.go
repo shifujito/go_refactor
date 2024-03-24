@@ -120,6 +120,8 @@ func mistakeCopy() {
 	dst = make([]int, len(src))
 	copy(dst, src)
 	fmt.Println(dst)
+	fmt.Println(&dst[0])
+	fmt.Println(&src[0])
 }
 
 func mistakeAppend() {
@@ -127,12 +129,19 @@ func mistakeAppend() {
 	s1 := []int{1, 2, 3}
 	s2 := s1[1:2]
 	s3 := append(s2, 10)
-	fmt.Println(s3)
+	fmt.Println(s1) // [1 2 10]
+	fmt.Println(s2) // [2]
+	fmt.Println(s3) // [2 10]
 
-	// 正しい追加
-	// dst = []int{1, 2, 3}
-	// dst = append(dst, 4)
-	// fmt.Println(dst)
+	// 正しい追加(s1に追加させない)
+	s1 = []int{1, 2, 3}
+	sCopy := make([]int, 2)
+	copy(sCopy, s1)
+	result := append(sCopy, 10)
+	fmt.Println(s1)     // [1 2 3]
+	fmt.Println(sCopy)  // [1 2]
+	fmt.Println(result) // [1 2 10]
+
 }
 
 func getFunc(name string) (func(), error) {
