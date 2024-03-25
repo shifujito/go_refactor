@@ -141,7 +141,40 @@ func mistakeAppend() {
 	fmt.Println(s1)     // [1 2 3]
 	fmt.Println(sCopy)  // [1 2]
 	fmt.Println(result) // [1 2 10]
+}
 
+// スライスとメモリリーク
+func sliceAndMemoryLeak() {
+	for i := 0; i < 10; i++ {
+		// 文字列からbyte配列を作成
+		msg := []byte("abcdefghijklmnopqrstuvwxyz")
+		fmt.Println(msg)
+		badMsg := getBadMessageType(msg)
+		fmt.Println(badMsg)
+		// newMsgの長さを出力
+		fmt.Println(len(badMsg))
+		// newMsgの容量を出力
+		fmt.Println(cap(badMsg))
+		// newMsgの容量を変更
+		goodMsg := getGoodMessageType(msg)
+		fmt.Println(goodMsg)
+		// newMsgの長さを出力
+		fmt.Println(len(goodMsg))
+		// newMsgの容量を出力
+		fmt.Println(cap(goodMsg))
+	}
+}
+
+// msgをスライス化してメッセージ種別を計算する
+func getBadMessageType(msg []byte) []byte {
+	return msg[:3]
+}
+
+func getGoodMessageType(msg []byte) []byte {
+	// msg[:3]を返す
+	msgType := make([]byte, 3)
+	copy(msgType, msg[:3])
+	return msgType
 }
 
 func getFunc(name string) (func(), error) {
@@ -154,12 +187,11 @@ func getFunc(name string) (func(), error) {
 		"no23": handleOperations,
 		"no24": mistakeCopy,
 		"no25": mistakeAppend,
+		"no26": sliceAndMemoryLeak,
 	}
-
 	f, exists := funcs[name]
 	if !exists {
 		return nil, fmt.Errorf("関数が見つかりません: %s", name)
 	}
-
 	return f, nil
 }
