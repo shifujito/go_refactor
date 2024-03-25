@@ -216,7 +216,9 @@ func printAlloc() {
 }
 
 // 非効率なマップの初期化
-func initMap() {}
+func initMap() {
+
+}
 
 func getFunc(name string) (func(), error) {
 	funcs := map[string]func(){
