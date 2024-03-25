@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"runtime"
 	"strconv"
 )
 
@@ -163,6 +164,8 @@ func sliceAndMemoryLeak() {
 		// newMsgの容量を出力
 		fmt.Println(cap(goodMsg))
 	}
+	fmt.Println("-------sliceAndMemoryLeak end-------")
+	sliceAndPointer()
 }
 
 // msgをスライス化してメッセージ種別を計算する
@@ -177,6 +180,44 @@ func getGoodMessageType(msg []byte) []byte {
 	return msgType
 }
 
+type Foo struct {
+	v []byte
+}
+
+func sliceAndPointer() {
+	foos := make([]Foo, 1000)
+	printAlloc()
+	for i := 0; i < len(foos); i++ {
+		foos[i] = Foo{
+			v: make([]byte, 1024*1024),
+		}
+	}
+	printAlloc()
+
+	two := keepFirstTwoElementsOnly(foos)
+	fmt.Println(two[0].v[0])
+	runtime.GC()
+	printAlloc()
+	runtime.KeepAlive(two)
+}
+
+func keepFirstTwoElementsOnly(foos []Foo) []Foo {
+	// foosの最初の2つの要素を保持するスライスを作成
+	// return foos[:2]
+	// return foos[:2:2]
+	res := make([]Foo, 2)
+	copy(res, foos)
+	return res
+}
+func printAlloc() {
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+	fmt.Printf("Alloc = %v KB\n", m.Alloc/1024)
+}
+
+// 非効率なマップの初期化
+func initMap() {}
+
 func getFunc(name string) (func(), error) {
 	funcs := map[string]func(){
 		"no17": addNumbers,
@@ -188,6 +229,7 @@ func getFunc(name string) (func(), error) {
 		"no24": mistakeCopy,
 		"no25": mistakeAppend,
 		"no26": sliceAndMemoryLeak,
+		"no27": initMap,
 	}
 	f, exists := funcs[name]
 	if !exists {
