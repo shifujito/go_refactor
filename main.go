@@ -256,6 +256,31 @@ func compareValue() {
 	fmt.Println(reflect.DeepEqual(cst, cst2))
 }
 
+// rangeループで要素がコピーされることを無視する
+type account struct {
+	balance float64
+}
+
+func rangeLoop() {
+	// 更新されない
+	accounts := []account{{100.0}, {200.0}, {300.0}}
+	for _, acc := range accounts {
+		acc.balance += 1000
+	}
+	fmt.Println(accounts)
+	// 更新されるパターン1
+	for i := range accounts {
+		accounts[i].balance += 1000
+	}
+	fmt.Println(accounts)
+	// 更新されるパターン2
+	accounts2 := []*account{{100.0}, {200.0}, {300.0}}
+	for _, acc := range accounts2 {
+		acc.balance += 1000
+	}
+	fmt.Println(accounts2)
+}
+
 func getFunc(name string) (func(), error) {
 	funcs := map[string]func(){
 		"no17": addNumbers,
@@ -270,6 +295,7 @@ func getFunc(name string) (func(), error) {
 		"no27": initMap,
 		"no28": mapAndMemoryLeak,
 		"no29": compareValue,
+		"no30": rangeLoop,
 	}
 	f, exists := funcs[name]
 	if !exists {
