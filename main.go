@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"reflect"
 	"runtime"
 	"strconv"
 )
@@ -217,7 +218,42 @@ func printAlloc() {
 
 // 非効率なマップの初期化
 func initMap() {
+	m := map[string]int{
+		"1": 1,
+		"2": 2,
+		"3": 3,
+	}
+	fmt.Println(m)
+}
 
+// マップとメモリリーク
+func mapAndMemoryLeak() {
+	n := 1000000
+	m := make(map[int][128]byte)
+	printAlloc()
+	for i := 0; i < n; i++ {
+		m[i] = [128]byte{}
+	}
+	printAlloc()
+
+	for i := 0; i < n; i++ {
+		delete(m, i)
+	}
+	runtime.GC()
+	printAlloc()
+	runtime.KeepAlive(m)
+}
+
+// 値の比較誤り
+type costumer struct {
+	id         string
+	operations []float64
+}
+
+func compareValue() {
+	cst := costumer{id: "1", operations: []float64{1.0}}
+	cst2 := costumer{id: "1", operations: []float64{1.0}}
+	fmt.Println(reflect.DeepEqual(cst, cst2))
 }
 
 func getFunc(name string) (func(), error) {
@@ -232,6 +268,8 @@ func getFunc(name string) (func(), error) {
 		"no25": mistakeAppend,
 		"no26": sliceAndMemoryLeak,
 		"no27": initMap,
+		"no28": mapAndMemoryLeak,
+		"no29": compareValue,
 	}
 	f, exists := funcs[name]
 	if !exists {
