@@ -281,6 +281,51 @@ func rangeLoop() {
 	fmt.Println(accounts2)
 }
 
+// rangeループでの引数の評価方法を無視する
+func ignoreRangeLoop() {
+	s := []int{0, 1, 2}
+	for range s {
+		s = append(s, 3)
+	}
+	fmt.Println(s)
+
+	// 無限ループになる
+	// sb := []int{0, 1, 2}
+	// for i := 0; i < len(sb); i++ {
+	// 	sb = append(sb, 3)
+	// }
+
+	ch1 := make(chan int, 3)
+	go func() {
+		ch1 <- 0
+		ch1 <- 1
+		ch1 <- 2
+		close(ch1)
+	}()
+
+	ch2 := make(chan int, 3)
+	go func() {
+		ch2 <- 10
+		ch2 <- 11
+		ch2 <- 12
+	}()
+
+	ch := ch1
+	for v := range ch {
+		// ch1に対して評価される。
+		fmt.Println(v)
+		ch = ch2
+	}
+
+	a := []int{1, 2, 3}
+	for i, v := range a {
+		a[2] = 10
+		if i == 2 {
+			fmt.Println(v)
+		}
+	}
+}
+
 func getFunc(name string) (func(), error) {
 	funcs := map[string]func(){
 		"no17": addNumbers,
@@ -296,6 +341,7 @@ func getFunc(name string) (func(), error) {
 		"no28": mapAndMemoryLeak,
 		"no29": compareValue,
 		"no30": rangeLoop,
+		"no31": ignoreRangeLoop,
 	}
 	f, exists := funcs[name]
 	if !exists {
