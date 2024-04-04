@@ -317,13 +317,24 @@ func ignoreRangeLoop() {
 		ch = ch2
 	}
 
-	a := []int{1, 2, 3}
+	a := [3]int{1, 2, 3}
 	for i, v := range a {
 		a[2] = 10
 		if i == 2 {
-			fmt.Println(v)
+			fmt.Println("v1", v)
+			fmt.Println("v1", a[2])
 		}
 	}
+	fmt.Println(a)
+
+	b := [3]int{1, 2, 3}
+	for i, v := range &b {
+		b[2] = 100
+		if i == 2 {
+			fmt.Println("v2", v)
+		}
+	}
+	fmt.Println(b)
 }
 
 func getFunc(name string) (func(), error) {
