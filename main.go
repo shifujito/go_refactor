@@ -394,6 +394,30 @@ func mapOrder() {
 	fmt.Println(m3)
 }
 
+// No.34 break文の仕組みを無視する
+func ignoreBreak() {
+	// ループ内でswitchやselectと組み合わせてbreakを使う
+	for i := 0; i < 5; i++ {
+		fmt.Printf("%d\n", i)
+		switch i {
+		default:
+		case 2:
+			break
+		}
+	}
+	// break文は一番内側のfor文、switch文、select文を抜ける
+	// switch文ではなく、for文を抜ける
+loop:
+	for i := 5; i < 10; i++ {
+		fmt.Printf("%d\n", i)
+		switch i {
+		default:
+		case 7:
+			break loop
+		}
+	}
+}
+
 func getFunc(name string) (func(), error) {
 	funcs := map[string]func(){
 		"no17": addNumbers,
@@ -412,6 +436,7 @@ func getFunc(name string) (func(), error) {
 		"no31": ignoreRangeLoop,
 		"no32": ignoreRangeLoopPointer,
 		"no33": mapOrder,
+		"no34": ignoreBreak,
 	}
 	f, exists := funcs[name]
 	if !exists {
