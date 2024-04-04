@@ -418,6 +418,49 @@ loop:
 	}
 }
 
+// No35: ループ内でのdeferの使用
+// defer文は関数の終了時に実行される
+func memoryLeadReadFiles() {
+	// 下記の場合、途中でエラーが発生してもファイルは削除されない
+	// また、ファイルがクローズされないため、メモリリークが発生する
+	files := []string{"file1.txt", "file2.txt", "file3.txt"}
+	for _, file := range files {
+		f, err := os.Create(file)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		defer f.Close()
+		defer fmt.Println("defer os.Remove")
+		defer os.Remove(file)
+	}
+	fmt.Println("-------memoryLeadReadFiles end-------")
+}
+
+func closerReadFiles() {
+	files := []string{"file1.txt", "file2.txt", "file3.txt"}
+	for _, file := range files {
+		err := func() error {
+			f, err := os.Create(file)
+			if err != nil {
+				return err
+			}
+			defer f.Close()
+			defer fmt.Println("defer os.Remove")
+			defer os.Remove(file)
+			return nil
+		}()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+	fmt.Println("-------closerReadFiles end-------")
+}
+func readFiles() {
+	memoryLeadReadFiles()
+	closerReadFiles()
+}
+
 func getFunc(name string) (func(), error) {
 	funcs := map[string]func(){
 		"no17": addNumbers,
@@ -437,6 +480,7 @@ func getFunc(name string) (func(), error) {
 		"no32": ignoreRangeLoopPointer,
 		"no33": mapOrder,
 		"no34": ignoreBreak,
+		"no35": readFiles,
 	}
 	f, exists := funcs[name]
 	if !exists {
