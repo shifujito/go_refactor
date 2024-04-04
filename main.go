@@ -337,6 +337,63 @@ func ignoreRangeLoop() {
 	fmt.Println(b)
 }
 
+type Customer struct {
+	ID      string
+	Balance float64
+}
+type Store struct {
+	m map[string]*Customer
+}
+
+func (s *Store) storeCustomers(customers []Customer) {
+	for _, c := range customers {
+		c := c
+		fmt.Printf("%p\n", &c)
+		s.m[c.ID] = &c
+	}
+}
+
+func ignoreRangeLoopPointer() {
+	s := Store{m: make(map[string]*Customer)}
+	s.storeCustomers([]Customer{
+		{ID: "1", Balance: 100},
+		{ID: "2", Balance: 200},
+		{ID: "3", Balance: 300},
+	})
+	for k, v := range s.m {
+		fmt.Println(k, v)
+	}
+}
+
+func mapOrder() {
+	// 誤った例
+	m := map[int]bool{
+		1: true,
+		2: false,
+		3: true,
+	}
+	for k, v := range m {
+		if v {
+			m[10+k] = true
+		}
+	}
+	fmt.Println(m)
+	// 正しい例
+	m2 := map[int]bool{
+		1: true,
+		2: false,
+		3: true,
+	}
+	m3 := make(map[int]bool, len(m2))
+	for k, v := range m2 {
+		m3[k] = v
+		if v {
+			m3[10+k] = true
+		}
+	}
+	fmt.Println(m3)
+}
+
 func getFunc(name string) (func(), error) {
 	funcs := map[string]func(){
 		"no17": addNumbers,
@@ -353,6 +410,8 @@ func getFunc(name string) (func(), error) {
 		"no29": compareValue,
 		"no30": rangeLoop,
 		"no31": ignoreRangeLoop,
+		"no32": ignoreRangeLoopPointer,
+		"no33": mapOrder,
 	}
 	f, exists := funcs[name]
 	if !exists {
