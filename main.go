@@ -539,9 +539,15 @@ func unnecessaryStringConversion() {
 
 // 部分文字列とメモリリーク
 func subStringAndMemoryLeak() {
+	// 部分文字列の作成
 	s := "Hello, 世界"
 	sub := s[7:]
 	fmt.Println(sub)
+
+	// 部分文字列のメモリリーク
+	s1 := "Hello, 世界"
+	s2 := string([]rune(s1)[7:])
+	fmt.Println(s2)
 }
 
 func getFunc(name string) (func(), error) {
