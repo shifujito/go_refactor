@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"runtime"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -461,6 +462,74 @@ func readFiles() {
 	closerReadFiles()
 }
 
+// No.36: ルーンの概念を理解していない
+// 文字セットとは、文字の集合を意味します。Go言語では、文字セットはUnicodeで定義されています。
+// エンコーディングとは文字を可変なバイト数にエンコーディングする方法を指します。
+
+func runeConcept() {
+	s := "男"
+	fmt.Println(len(s)) // 3
+}
+
+// No.37 不正確な文字列の反復
+func inaccurateStringIteration() {
+	// 間違い
+	s := "Hello, 世界"
+	for i := 0; i < len(s); i++ {
+		fmt.Printf("%c", s[i])
+	}
+	fmt.Println()
+	// 正しい方法
+	runes := []rune(s)
+	for i := 0; i < len(runes); i++ {
+		fmt.Printf("%c", runes[i])
+	}
+	fmt.Println()
+}
+
+// No.38 Trim関数の誤用
+func trimUsage() {
+	// TrimRightとTrimSuffixの誤用
+	fmt.Println(strings.TrimRight("123oxo", "xo"))  // 123
+	fmt.Println(strings.TrimSuffix("123oxo", "xo")) // 123
+	// TrimRightは与えらた集合に末尾のルーンが含まれている場合、それを削除する
+	// TrimSuffixは与えられた文字列が末尾にある場合、それを削除する
+	// TrimLeftも同様
+	fmt.Println(strings.TrimLeft("oxo123", "ox"))   // 123
+	fmt.Println(strings.TrimPrefix("oxo123", "ox")) // o123
+}
+
+// No.39 最適化されていない文字列の連結
+func inefficientStringConcatenation() {
+	vals := []string{"a", "b", "c"}
+	val := badConcat(vals)
+	fmt.Println(val)
+	val = goodConcat(vals)
+	fmt.Println(val)
+}
+
+func badConcat(values []string) string {
+	// ループごとにsは更新されず、新たにメモリが再割り当てされる
+	s := ""
+	for _, v := range values {
+		s += v
+	}
+	return s
+}
+
+func goodConcat(values []string) string {
+	// strings.Builderを使用する
+	var b strings.Builder
+	for _, v := range values {
+		b.WriteString(v)
+	}
+	return b.String()
+	// strings.Builderは内部でバイトスライスを持ち、バイトスライスを使って文字列を構築する
+	// バイトスライスは可変長であり、バイトスライスの容量が不足すると自動的に拡張される
+	// バイトスライスの容量が不足すると、新しいバイトスライスが割り当てられ、古いバイトスライスの内容が新しいバイトスライスにコピーされる
+	// 注意点は、並行的に使用する場合は、ロックが必要
+}
+
 func getFunc(name string) (func(), error) {
 	funcs := map[string]func(){
 		"no17": addNumbers,
@@ -481,6 +550,10 @@ func getFunc(name string) (func(), error) {
 		"no33": mapOrder,
 		"no34": ignoreBreak,
 		"no35": readFiles,
+		"no36": runeConcept,
+		"no37": inaccurateStringIteration,
+		"no38": trimUsage,
+		"no39": inefficientStringConcatenation,
 	}
 	f, exists := funcs[name]
 	if !exists {
