@@ -530,6 +530,20 @@ func goodConcat(values []string) string {
 	// 注意点は、並行的に使用する場合は、ロックが必要
 }
 
+// No.40: 無駄な文字列変換
+func unnecessaryStringConversion() {
+	// 文字列とbyteスライスのどちらを使うべきか？
+	// ほとんどの場合、byteスライスを使うべき
+	fmt.Println("--- unnecessaryStringConversion ---")
+}
+
+// 部分文字列とメモリリーク
+func subStringAndMemoryLeak() {
+	s := "Hello, 世界"
+	sub := s[7:]
+	fmt.Println(sub)
+}
+
 func getFunc(name string) (func(), error) {
 	funcs := map[string]func(){
 		"no17": addNumbers,
@@ -554,6 +568,8 @@ func getFunc(name string) (func(), error) {
 		"no37": inaccurateStringIteration,
 		"no38": trimUsage,
 		"no39": inefficientStringConcatenation,
+		"no40": unnecessaryStringConversion,
+		"no41": subStringAndMemoryLeak,
 	}
 	f, exists := funcs[name]
 	if !exists {
