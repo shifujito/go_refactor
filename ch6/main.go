@@ -87,6 +87,8 @@ func useNamedResult2(a int) (b int) {
 // 	// do something
 // }
 
+// No.44 名前付きパラメータによる意図しない副作用
+
 func getFunc(i *int) (func(), error) {
 	funcs := map[string]func(){
 		"1":  func() { fmt.Println("Function 1") },
