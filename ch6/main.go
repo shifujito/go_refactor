@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -132,6 +134,45 @@ func (f *Foo) Bar() string {
 	return "Bar"
 }
 
+// No.46 ファイル名を関数の入力として使う
+func useFileNameAsInput() {
+	fileName := "test.txt"
+	count, err := countEmptyLinesInFile(fileName)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("Empty lines: %d\n", count)
+}
+
+func countEmptyLinesInFile(fileName string) (int, error) {
+	file, err := os.Open(fileName)
+	if err != nil {
+		return 0, err
+	}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		if scanner.Text() == "" {
+			// do something
+		}
+	}
+	return 0, nil
+}
+
+// No.47 deferの引数やレシーバの評価方法を無視している
+const (
+	StatusSuccess = "success"
+	StatusFailed  = "failed"
+	StatusFoo     = "foo"
+)
+
+func deferEvaluation() {
+	var status string
+	// Goはdeferを呼び出すときに引数を評価する
+	// これの解決策はポインタを渡すこと
+	defer fmt.Println(status)
+}
+
 func getFunc(i *int) (func(), error) {
 	funcs := map[string]func(){
 		"1":  func() { fmt.Println("Function 1") },
@@ -139,6 +180,8 @@ func getFunc(i *int) (func(), error) {
 		"43": useNamedResult,
 		"44": namedResult,
 		"45": validate,
+		"46": useFileNameAsInput,
+		"47": deferEvaluation,
 	}
 	f, ok := funcs[fmt.Sprintf("%d", *i)]
 	if !ok {
