@@ -3,6 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"strings"
+
+	"github.com/pkg/errors"
 )
 
 // No.42 どちらのレシーバ型を使うべきか
@@ -89,11 +92,53 @@ func useNamedResult2(a int) (b int) {
 
 // No.44 名前付きパラメータによる意図しない副作用
 
+func namedResult() {
+	fmt.Println("--- namedResult ---")
+}
+
+// No.45 nilレシーバを返す
+type MultiError struct {
+	errs []string
+}
+
+func (m *MultiError) Add(err error) {
+	m.errs = append(m.errs, err.Error())
+}
+
+func (m *MultiError) Error() string {
+	return strings.Join(m.errs, ";")
+}
+
+func validate() {
+	var m *MultiError
+	name := "1"
+	if name == "" {
+		m = &MultiError{}
+		m.Add(errors.New("error1"))
+	} else if name == "test" {
+		m = &MultiError{}
+		m.Add(errors.New("error2"))
+	}
+	fmt.Println(m)
+	var foo *Foo
+	fmt.Println(foo.Bar())
+	fmt.Println(foo)
+
+}
+
+type Foo struct{}
+
+func (f *Foo) Bar() string {
+	return "Bar"
+}
+
 func getFunc(i *int) (func(), error) {
 	funcs := map[string]func(){
 		"1":  func() { fmt.Println("Function 1") },
 		"42": whichReceiverType,
 		"43": useNamedResult,
+		"44": namedResult,
+		"45": validate,
 	}
 	f, ok := funcs[fmt.Sprintf("%d", *i)]
 	if !ok {
