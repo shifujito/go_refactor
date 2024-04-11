@@ -37,11 +37,37 @@ func wrapFoo() {
 	fmt.Println(originalErr) // "original error"
 }
 
+// No.50 エラー型を不正確に検査する
+type transientError struct {
+	err error
+}
+
+func (t transientError) Error() string {
+	return fmt.Sprintf("transient error: %v", t.err)
+}
+
+func getTransactionAmount(ID string) (float32, error) {
+	if len(ID) != 5 {
+		return 0, fmt.Errorf("id is invalid: %s", ID)
+	}
+
+	return 100.0, nil
+}
+
+func nm50() {
+	amount, err := getTransactionAmount("12345")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(amount)
+}
+
 func getFunc(i *int) (func(), error) {
 	funcs := map[string]func(){
 		"1":  func() { fmt.Println("Function 1") },
 		"48": panicFunc,
 		"49": wrapFoo,
+		"50": nm50,
 	}
 	f, ok := funcs[fmt.Sprintf("%d", *i)]
 	if !ok {
