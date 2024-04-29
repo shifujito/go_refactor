@@ -78,6 +78,11 @@ func nm52() {
 	fmt.Println(route, err)
 }
 
+// No.53 エラー処理をしない
+// ブランク識別子を代入することで、エラーを無視することを明示する。
+
+// No.54 deferでエラー処理をしない。
+
 func validate(lat, lng float64) (Route, error) {
 	if lat > 90.0 || lng < -90.0 {
 		return Route{}, fmt.Errorf("invalid latitude or longitude")
