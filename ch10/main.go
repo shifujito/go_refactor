@@ -22,6 +22,11 @@ func no75() {
 	}
 }
 
+func no76() {
+	// No.76 time.Afterとメモリリーク
+	// time.Afterは、
+}
+
 func main() {
 	no75()
 }
