@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -66,6 +67,22 @@ func (e Event) MarshalJSON() ([]byte, error) {
 		ID:   e.ID,
 		Time: e.Time,
 	})
+}
+
+func no78() {
+	// SQLの間違い
+	db, err := sql.Open("mysql", "user:password@/dbname")
+	if err != nil {
+		fmt.Println("err", err)
+		return
+	}
+	// Openは、データベースへの接続を確立せず、引数を検証するだけの場合がある。
+	// SQLドライバーに依存する。
+	// sql.Openはを使う関数がdbに到達可能を保証するには、Pingメソッドを使う。
+	if err := db.Ping(); err != nil {
+		fmt.Println("err", err)
+		return
+	}
 }
 
 func main() {
